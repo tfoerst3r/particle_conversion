@@ -1,0 +1,28 @@
+[tool.poetry]
+name = "particle-conversion"
+version = "0.1.0"
+description = ""
+authors = ["Foerster, T. <thomas.foerster@hzdr.de>"]
+readme = "README.md"
+packages = [{include = "particle_conversion"}]
+
+[tool.poetry.dependencies]
+python = ">=3.10,<3.11"
+numpy = "^1.24.3"
+cantera = "^2.6.0.post1"
+argparse = "^1.4.0"
+tomli = "^2.0.1"
+scipy = "^1.10.1"
+matplotlib = "^3.7.1"
+
+[tool.poetry.scripts]
+pconv = "particle_conversion.__main__:main"
+
+[tool.poetry.group.dev.dependencies]
+ipython = "^8.13.2"
+pandas = "^2.0.1"
+reuse = "^1.1.2"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
