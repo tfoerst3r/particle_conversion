@@ -6,11 +6,11 @@ import numpy as np
 from particle_conversion.constants import _defaults
 
 
-class ZEROreactor(object):
-    def __init__(self,settings):
+class ZEROreactor():
+    def __init__(self,settings,output):
                  
         self.settings = settings
-
+        self.output = output
         # Simulation basic numerical boundary conditions
         self.calctime = settings["numerical"]["calctime"] if "calctime" in settings["numerical"].keys() else _defaults["numerical"]["calctime"]
         self.steps    = settings["numerical"]["steps"] if "steps" in settings["numerical"].keys() else _defaults["numerical"]["steps"]
@@ -212,23 +212,26 @@ class ZEROreactor(object):
                 others_header               = self._others_header,
                 others_flags                = self._others_flags,
                 others                      = self.others_calc,
-                output_filename             = 'out_results01.txt'
+                output_filename             = self.output
             )
 
             #-----------------------------------------------------
             #-- Solver Call
-            print('=== Round:',i)
-            print('============================================')
+            #print('=== Round:',i)
+            #print('============================================')
             # Start time for calculation, s
             t_start = 0.0
             # Final time, s
             t_end = self.calctime
             # number of time steps
             steps = self.steps
-            # run solver
+            
+            #-- RUN SOLVER (this is the main step of this project)
             solver_0D_reactor.solve_char(t_start,t_end,steps)
-            print('')
-            print('')
+            #print('')
+            #print('')
+
+            solver_0D_reactor.char.result.to_csv(self.output, sep=',')
 
             self.comp_calc   = [] # reset
             self.others_calc = [] # reset
