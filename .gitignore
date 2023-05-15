@@ -56,4 +56,4 @@ growth_model.log
 
 # Temporary files
 *.sw?
-
+*.~*
