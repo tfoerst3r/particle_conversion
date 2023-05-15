@@ -42,6 +42,7 @@ class Solver_class():
         #-- char particle object initialisation
         self.char = Particle_class(
             settings=settings['particle'],
+            output=self.output_filename,
             gas_header=comp_header,
             gas_flags=comp_flags,
             gas_comp=comp,
@@ -75,6 +76,7 @@ class Solver_class():
         #======================================
         #== set solver
         # - BDF method suited to stiff systems of ODEs
+        # - function which are solved is self.char.conv()
         ode_system = ode(self.char.conv).set_integrator('vode', method='bdf')
 
         #======================================
