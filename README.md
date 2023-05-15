@@ -3,7 +3,6 @@ tags: #1Dmodel, #coal-conversion, #python
 title: One Dimension Particle Conversion Model
 ---
 
-
 <center>
 <p style="font-size:20pt" align=center> <b>One Dimension Particle Conversion Model</b> </p>
 This model simulates the conversion process, based on porous carbonaceous materials, like coal.
@@ -11,13 +10,18 @@ This model simulates the conversion process, based on porous carbonaceous materi
 
 ## About the Project (optional)
 
+<!------------------->
+<!----- Chapter ----->
+<!------------------->
 ## Getting Started
+
 
 ### Prerequisites
 
 > Which software does the user need to have installed to run your project? 
 > Which knowledge should they possess? (Link to potential learning resources) 
 > Does the user require any accounts/ access rights with third-party services? 
+
 
 ### Installation
 
