@@ -1,6 +1,8 @@
 __author__ = 'tf'
 
 import numpy as np
+from pandas import concat, Series, DataFrame
+import csv
 from scipy.optimize import bisect
 #-- math.pow always returns a float -> no extra float() calls needed!
 from math import pow as pow
@@ -14,6 +16,7 @@ from particle_conversion.constants import _defaults
 class Particle_class():
     def __init__(self, 
             settings,
+            output,
             gas_header,
             gas_flags,
             gas_comp,
@@ -206,6 +209,35 @@ class Particle_class():
 
         self._adaption_factor = float(PropDict['adaptionfactor'])
 
+        #-- Init output dataframe --#
+        header_time = 'Time'
+        header = [
+            header_time,    # 01
+            'mp',           # 02
+            'dmpdt',        # 03
+            'X',            # 04
+            'dXdt',         # 05
+            'dXdt_O2',      # 06
+            'dXdt_CO2',     # 07
+            'dXdt_H2O',     # 08
+            'C1_O2',        # 09
+            'C1_CO2',       # 10
+            'C1_H2O',       # 11
+            'effF_O2',      # 12
+            'effF_CO2',     # 13
+            'effF_H2O',     # 14
+            'Sh',           # 15
+            'Bscaling',     # 16
+            'porosity',     # 17
+            'Tp',           # 18
+            'rhop',         # 19
+            'dp',           # 20
+            'ps',           # 21
+        ]
+
+        self.result = DataFrame(columns=header)
+        #self.result.set_index(header_time, inplace=True)
+
         #################
         ## END -- Init ##
         #################
@@ -215,6 +247,9 @@ class Particle_class():
     ## Model Solver ##
     ##################
     def conv(self,t,y):
+        '''
+        This function will be solved by the ODE proceedure
+        '''
 
         X = y  # Carbon conversion, -
 
@@ -267,33 +302,34 @@ class Particle_class():
         Sh,Bscaling = self.Sheerwood(flag=True)
         #------------------------------------------#
         #-- (E) output
-        if t == 0:
-            print(
-                '==='
-                'Time',         # 01
-                'mp',           # 02
-                'dmpdt',        # 03
-                'X',            # 04
-                'dXdt',         # 05
-                'dXdt_O2',      # 06
-                'dXdt_CO2',     # 07
-                'dXdt_H2O',     # 08
-                'C1_O2',        # 09
-                'C1_CO2',       # 10
-                'C1_H2O',       # 11
-                'effF_O2',      # 12
-                'effF_CO2',     # 13
-                'effF_H2O',     # 14
-                'Sh',           # 15
-                'Bscaling',     # 16
-                'porosity',     # 17
-                'Tp',           # 18
-                'rhop',         # 19
-                'dp',           # 20
-                'ps',           # 21
-            )
+        #if t == 0:
 
-        print (
+        #    header = [
+        #        '==='
+        #        'Time',         # 01
+        #        'mp',           # 02
+        #        'dmpdt',        # 03
+        #        'X',            # 04
+        #        'dXdt',         # 05
+        #        'dXdt_O2',      # 06
+        #        'dXdt_CO2',     # 07
+        #        'dXdt_H2O',     # 08
+        #        'C1_O2',        # 09
+        #        'C1_CO2',       # 10
+        #        'C1_H2O',       # 11
+        #        'effF_O2',      # 12
+        #        'effF_CO2',     # 13
+        #        'effF_H2O',     # 14
+        #        'Sh',           # 15
+        #        'Bscaling',     # 16
+        #        'porosity',     # 17
+        #        'Tp',           # 18
+        #        'rhop',         # 19
+        #        'dp',           # 20
+        #        'ps',           # 21
+        #    ]
+
+        data_row = [
             round(float(t),8),
             round(float(mp),13),
             round(float(dmdt),13),
@@ -315,7 +351,10 @@ class Particle_class():
             round(float(self.rhop), 2),
             round(self.dp, 7),
             round(self.ps, 1),
-        )
+        ]
+        
+        new_data_row = DataFrame([data_row], columns=self.result.columns)
+        self.result = concat([self.result, new_data_row], ignore_index=True)
 
         return self.dXdt
 
