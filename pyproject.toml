@@ -14,14 +14,15 @@ argparse = "^1.4.0"
 tomli = "^2.0.1"
 scipy = "^1.10.1"
 matplotlib = "^3.7.1"
+pandas = "^2.0.1"
 
 [tool.poetry.scripts]
 pconv = "particle_conversion.__main__:main"
 
 [tool.poetry.group.dev.dependencies]
 ipython = "^8.13.2"
-pandas = "^2.0.1"
 reuse = "^1.1.2"
+flake8 = "^6.0.0"
 
 [build-system]
 requires = ["poetry-core"]
