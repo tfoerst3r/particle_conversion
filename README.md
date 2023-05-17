@@ -186,6 +186,12 @@ Please see the file [LICENSE.md](./LICENSE.md) for further information about how
 <!--===============-->
 # Citation
 
+If you are using this code in your publications, please refer to [DOI:10.](https://doi.org/) for citation, or cite as:
+
+<small>
+Thomas Förster. (2023). <i>Particle Conversion Solver: Testing tool for different conversion models via custom predefined boundary conditions.</i> Zenodo. <a href="https://doi.org/">https://doi.org/</a>
+</small>
+
 
 <!-- Literature -->
 

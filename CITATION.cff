@@ -1,0 +1,10 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+- family-names: "Förster"
+  given-names: "Thomas"
+  orcid: "https://orcid.org/0000-000"
+title: "Particle Conversion Solver: Testing tool for different conversion models via custom predefined boundary conditions"
+doi: 
+date-released: 2023-02-08
+url: "https://github.com/tfoerst3r/particle_conversion"
