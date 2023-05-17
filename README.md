@@ -1,20 +1,21 @@
----
-tags: #1Dmodel, #coal-conversion, #python
-title: One Dimension Particle Conversion Model
----
 
 <h1 align="center">One Dimension Particle Conversion Model</h1>
 <p align=center> 
 This model simulates the conversion process, based on porous carbonaceous materials, like coal.
 </p>
 
-# About the Project (optional)
+
+<!--===============-->
+<!--=== Chapter ===-->
+<!--===============-->
+# About the Project
 
 The project simulates different model approaches for the conversion process of porous carbonaceous particle. The conversion process depends on a variety of property and conditions, like overall pressure.
 
-<!------------------->
-<!----- Chapter ----->
-<!------------------->
+
+<!--===============-->
+<!--=== Chapter ===-->
+<!--===============-->
 # Getting Started
 
 ## Prerequisites
@@ -89,57 +90,104 @@ $ pip install particle_conversion-*.whl
 - With `$ which pconv` you can check if the executable is in the desired environment.
 
 
+## Uninstall the module:
+
+For uninstalling `pconv` in your current environment use:
+
+~~~
+$ pip uninstall pconv
+~~~
 
 
+<!--===============-->
+<!--=== Chapter ===-->
+<!--===============-->
+# Usage
 
 
+## Prerequisites
+
+First you need to activate the environment you want to work in. Either use
+
+- the provided poetry environment
+
+    ```
+    $ poetry serve
+    ```
+
+- or any other environment where you installed the provided wheel
+
+    ```
+    $ source /path/to/your/env/bin/activate
+    ```
+
+In both versions an executable `pconv` should be available. Alternatively you can run the CLI directly via:
+
+```
+$ poetry run pconv [OPTIONS]
+```
 
 
-> (If applicable) add step-by-step instructions on how to install and run the project 
+## Usage of the `pconv` script
 
-## Usage
+**Syntax**
 
-> How to use your project? 
-> How to handle everyday use cases? --> this can also be done on a separate documentation page
+```
+$ pconv --config [CONFIG FILE] --output [OUTPUT FILE]
+```
 
+For more help type:
 
+```
+$ pconv --help
+```
 
+**Step 1. Choose the appropriate model settings and adapted the corresponding configuration file.**
 
+- Choose the appropriate growth model (for more details see details in [the model file](./docs/conversion_models.md)) 
+- Adapt the corresponding model configuration `*.toml` file (see base example in [config file](./config/).
 
-
-## Roadmap (optional)
-
-> Give a glimpse of features that are on the roadmap
-
-## Contributing (optional)
-
-> Put other information here, like where to get help and find more project-related information, 
-> e.g., community forums, discord channels, Trello boards 
-
-We are accepting merge requests, bug reports, and feature requests. 
-Please see the [CONTRIBUTING.md](CONTRIBUTING.md) for the complete guide. 
-
-## License
-
-Distributed under the MIT License. See `LICENSE.md` for more information.
-
------
-
-> There are many more sections that can be included here, like 
->
-> * Contributors 
-> * Contact information 
-> * FAQ
+**Step 2. Run the model with the desired output path.**
 
 
-# Tray
+## Examples
 
-Possible adaption:
+**default model**
 
-- self.dXdt = 0.5 * self.dXdt
-    - bader pS approach
-    - fluent pS approach
+```
+$ pconv --config ./config/base.toml --output ./output/base_output.csv
+```
 
-- self.Deff = 0.5 * self.Deff
 
+<!--===============-->
+<!--=== Chapter ===-->
+<!--===============-->
+# Contributing
+
+**We welcome your contribution!**
+
+The repository is still under development and any feedback, suggestions, technical contributions are highly welcome.
+
+General Options:
+
+- open an issue, if you have improvement ideas
+- fork the project and contribute via merge request against the main branch of this repository
+
+
+<!--===============-->
+<!--=== Chapter ===-->
+<!--===============-->
+# License
+
+Please see the file [LICENSE.md](./LICENSE.md) for further information about how the content is licensed.
+
+<!--===============-->
+<!--=== Chapter ===-->
+<!--===============-->
+# Citation
+
+
+<!-- Literature -->
+
+<!-- Links -->
 
