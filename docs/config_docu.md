@@ -226,7 +226,7 @@ calctime = 3.0
 
 ## Reaction mechanism
 
-Be aware that each models parameters are fit accordingly. Meaning the Arrhenius parameters should correspond with model ($A_{0,i}$,$E_{a,i}$,$n_i$)
+Be aware that each models parameters are fit accordingly. Meaning the Arrhenius parameters should correspond with model ($A_{0,i}$, $E_{a,i}$, $n_i$)
 
 <!--
 #.. parameters for the apparent density of char fraction, 
@@ -241,18 +241,20 @@ Be aware that each models parameters are fit accordingly. Meaning the Arrhenius 
 -->
 
 Kinetic is defined via the following equation:
+
 $$ 
-\begin{align}
+\begin{aligned}
 r_X
- &= \frac{\mathrm{d} X_C}{\mathrm{d} t} 
+ &= \frac{\mathrm{d} X_C}{\mathrm{d} t}
   = -\frac{1}{m_{C,0}}\frac{\mathrm{d} m_C}{\mathrm{d} t} \\
  &= \sum\limits_{i} \eta_{i} \cdot A_{0,i} \cdot \exp\left( -\frac{E_{a,i}}{R_u \cdot T_p} \right) \cdot p_i^{n_i} \cdot (1-X_C) \cdot \frac{s_r}{s_{r,0}}
-\end{align}
+\end{aligned}
 $$
+
 Considering that that effectiveness factor $\eta_i$ is dependent on a variety of parameters.
 
 
-: Model assumptions for $\tfrac{s_r}{s_{r,0}}$
+Model assumptions for $\tfrac{s_r}{s_{r,0}}$
 
 | Abbr.           | Model | Name                | Definition                             |
 | -----           | ----- | -----               | -----                                  |
