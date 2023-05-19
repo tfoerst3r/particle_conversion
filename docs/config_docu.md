@@ -251,7 +251,7 @@ r_X
 \end{aligned}
 $$
 
-Considering that that effectiveness factor $\eta_i$ is dependent on a variety of parameters.
+Be aware that the effectiveness factor $\eta_i$ is dependent on a variety of parameters.
 
 
 Model assumptions for $\tfrac{s_r}{s_{r,0}}$
