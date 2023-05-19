@@ -10,7 +10,7 @@ This model simulates the conversion process, based on porous carbonaceous materi
 <!--===============-->
 # About the Project
 
-The project simulates different model approaches for the conversion process of porous carbonaceous particle. The conversion process depends on a variety of property and conditions, like overall pressure.
+The project simulates different model approaches for the conversion process of porous carbonaceous particle. The conversion process depends on a variety of property and conditions, like overall pressure. Be aware that this model only solve the conversion process depending on the input. **No additional equations are solved.** This includes energy or motion/diffusion specific processes.
 
 
 <!--===============-->
@@ -144,7 +144,7 @@ $ pconv --help
 
 **Step 1. Choose the appropriate model settings and adapted the corresponding configuration file.**
 
-- Choose the appropriate growth model (for more details see details in [the model file](./docs/conversion_models.md)) 
+- Choose the appropriate configuration settings (for more details see [the config and model documentation][config_docu]) 
 - Adapt the corresponding model configuration `*.toml` file (see base example in [config file](./config/).
 
 **Step 2. Run the model with the desired output path.**
@@ -158,6 +158,17 @@ $ pconv --help
 $ pconv --config ./config/base.toml --output ./output/base_output.csv
 ```
 
+## Graphical preview
+
+No visualisation of the results are included in the package. But for displaying a `*.csv` the tool gnuplot can be used easily.
+You can use the headers defined in your output file.
+
+**Example in the gnuplot console**
+
+``` gnuplot
+gnuplot> set datafile separator comma
+gnuplot> plot 'your-csv-output-file.csv' using (column('Time')):(column('dXdt')) with lines
+```
 
 <!--===============-->
 <!--=== Chapter ===-->
@@ -193,7 +204,12 @@ Thomas Förster. (2023). <i>Particle Conversion Solver: Testing tool for differe
 </small>
 
 
-<!-- Literature -->
+<!---- Literature ---->
 
-<!-- Links -->
+<!---- Links ---->
+[zenodo]: https://doi.org/10.5281/zenodo.6705792
+[download-wheel]: https://codebase.helmholtz.cloud/api/v4/projects/4188/jobs/artifacts/master/raw/dist/growth_model-1.0.1-py3-none-any.whl?job=build_wheel_package
+[ssh-key]: https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent
+[poetry-install]: https://python-poetry.org/docs/
+[config_docu]: ./docs/config_docu.md
 
