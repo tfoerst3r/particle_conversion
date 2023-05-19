@@ -35,8 +35,8 @@ class Particle_class():
         PropDict['rhop0']         = settings['properties']['density_particle_apparent_init']
         PropDict['rhoa0']         = settings['properties']['density_ash_true']
         PropDict['rho_true_char'] = settings['properties']['density_carbon_true']
-        PropDict['sint0']         = settings['properties']['reactive_surface_init']
-        
+        PropDict['sint0']         = settings['properties']['reactive_surface_init'] if "reactive_surface_init" in settings["properties"].keys() else _defaults['particle']['properties']['reactive_surface_init']
+
         # proxymate analysis
         PropDict['y_fc0']  = settings['proxymate_analysis']['fixedcarbon_init']
         PropDict['y_ash0'] = settings['proxymate_analysis']['ash_init']
@@ -56,7 +56,7 @@ class Particle_class():
         self.gas_flags   = gas_flags
         self.gas_default = ''
         self.gas_comp_dict = { 'CO':0, 'CO2':0, 'H2O':0, 'O2':0, 'N2':0, 'CH4':0, 'H2':0 }
-        self.diffC = DiffusionCoeff()   # init class definition
+        self.diffC = DiffusionCoeff(mechanism)   # init class definition
         self.gas_default_diff_partner = { 'CO2':{'CO':0},'O2':{'CO2':0},'H2O':{'CO':0.0,'H2':0.0} }
 
         'others, Re,Pr,Tg,Tp'
@@ -287,9 +287,12 @@ class Particle_class():
         self.Pr = self.gas.viscosity * self.gas.cp/self.gas.thermal_conductivity
 
 
-        #------------------------------------------#
-        #>> (D) reaction rate, 1/s, R ... dXdt = dX1/dt + dX2/dt + dX3/dt
+        #--------------------------------------------------------------------------#
+        #-- (D) reaction rate, 1/s, R ... dXdt = dX1/dt + dX2/dt + dX3/dt ---------#
         self.ratep['O2'],self.ratep['CO2'],self.ratep['H2O']   = self.rate_3Rkt()
+
+
+
         self.dXdt = self.ratep['O2'] + self.ratep['CO2'] + self.ratep['H2O']
 
         #self.dXdt = self._adaption_factor * self.dXdt
@@ -328,14 +331,14 @@ class Particle_class():
         #    ]
 
         data_row = [
-            round(float(t),8),
-            round(float(mp),13),
-            round(float(dmdt),13),
-            round(float(self.X),6),
-            round(float(self.dXdt),9),
-            round(float(self.ratep['O2']), 7),
-            round(float(self.ratep['CO2']),7),
-            round(float(self.ratep['H2O']),7),
+            round(float(t),8),                  # time, s
+            round(float(mp),13),                # particle mass, kg
+            round(float(dmdt),13),              # change in mass, kg/s
+            round(float(self.X),6),             # carbon conversion, kg/kg
+            round(float(self.dXdt),9),          # total change in carbon conversion, kg/kg 1/s
+            round(float(self.ratep['O2']), 7),  # change in carbon conversion for C+O2, kg/kg 1/s 
+            round(float(self.ratep['CO2']),7),  # change in carbon conversion for C+CO2, kg/kg 1/s
+            round(float(self.ratep['H2O']),7),  # change in carbon conversion for C+H2O, kg/kg 1/s
             round(self.C1['O2'],  17),
             round(self.C1['CO2'], 17),
             round(self.C1['H2O'], 17),
@@ -566,21 +569,31 @@ class Particle_class():
                 ss0 = 1
             else:
                 ss0 = pow(1 - self.psi1 * np.log(1. - self.X), 0.5)
-        elif self.Sdevelmodel == 'SPM':
-            if self.X == 1:
-                ss0 = 1
-            else:
-                ss0 = pow( oneMXp , -1/3)
+
         elif self.Sdevelmodel == 'SDM':
             if self.X == 1:
                 ss0 = 0
             else:
-                ss0 = pow( oneMXp , -1)
-        elif self.Sdevelmodel == 'SDMstd':
+                ss0 = pow( (1-self.X) , -1)
+
+        elif self.Sdevelmodel == 'SPM':
+            if self.X == 1:
+                ss0 = 1
+            else:
+                ss0 = pow( (1-self.X) , -1/3)
+
+        elif self.Sdevelmodel == 'SDMp':
             if self.X == 1:
                 ss0 = 0
             else:
-                ss0 = pow( (1-self.X) , -1)
+                ss0 = pow( oneMXp , -1)
+
+        elif self.Sdevelmodel == 'SPMp':
+            if self.X == 1:
+                ss0 = 1
+            else:
+                ss0 = pow( oneMXp , -1/3)
+
         else:
             raise IOError('Unkown Methode')
 

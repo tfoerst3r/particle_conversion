@@ -1,14 +1,14 @@
 # Default Values
 _defaults = {
     'numerical': {
-        'calctime': 2.0, #s
+        'calctime': 5.0, #s
         'steps': 200,
         'conversion_init': 0.0,
         'conversion_final': 0.999,
         'mechanism': 'gri30.cti'
     },
     'reactor': {
-        'default_temp': 1673.15, #K
+        'default_temp': 1273.15, #K
         'fallback_gas': 'CO2',
         'reactor_pressure': 1e5 #Pa
     },
@@ -27,7 +27,8 @@ _defaults = {
     },
     'particle':{
         'properties': {
-            'particle_init_conversion': 0.0
+            'particle_init_conversion': 0.0,
+            'reactive_surface_init': 1
         }
     }
 }

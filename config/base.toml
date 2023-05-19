@@ -12,7 +12,6 @@ particle_diameter_init = 1e-3 #m
 density_particle_apparent_init = 783.6 #kg/m3
 density_ash_true = 1900 #kg/m3
 density_carbon_true = 1900 #kg/m3
-reactive_surface_init=1 #m2
 ###################################################
 
 [particle.conversion_model]

@@ -1,20 +1,15 @@
-#!/usr/bin/env python3
-
-__author__ = 'tf'
-
 import numpy as np
 import cantera as ct
 
-
-class DiffusionCoeff(object):
+class DiffusionCoeff():
     """
     pass
     """
-    def __init__(self):
+    def __init__(self,mechanism):
 
         self._gas_constant  = ct.gas_constant/1000 # 8.3144621 J/mol-K
         self._avogadro = ct.avogadro/1000 # (1/mol) / (1/mol)
-        self._gas = ct.Solution('gri30.cti')
+        self._gas = ct.Solution(mechanism)
         self._oxidizer = 'O2'
 
 
@@ -69,7 +64,7 @@ class DiffusionCoeff(object):
 
         sigmaAB = (sigmadic[gasA] + sigmadic[gasB])/2
 
-        #-- Bird 2002, (J/mol)**(1/2) * J/K**(3/2)
+        #-- bird 2002, (J/mol)**(1/2) * J/K**(3/2)
         constantA = 3/8 * np.sqrt( self._gas_constant**3/(self._avogadro**2 * 2*np.pi ))
 
         DiffusionCoeff = constantA * \
