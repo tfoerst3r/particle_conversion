@@ -74,26 +74,43 @@ model = SDM
 ### `[reactor]`
 
 `fallback_gas = CO2/O2/H2O [default: CO2]`
-- Default gas composition if no `[environment]` gas composition is given.
+: Default gas composition if no `[environment]` gas composition is given.
 
 `default_temp = 1500 [default: 1673]`
-- constant reactor temperature, $\mathrm{K}$
+: constant reactor temperature, $\mathrm{K}$
 
 `reactor_pressure`
-- pressure of the reactor where the conversion takes place, $\mathrm{Pa}$
+: pressure of the reactor where the conversion takes place, $\mathrm{Pa}$
 
 ### `[particle]`
 
 - `[particle.properties]`
 
-    - particle_diameter_init
+    - `particle_diameter_init`
+      : particle diameter, $\mathrm{m}$
 
+    - `density_particle_apparent_init`
+      : apparent (incl. porous) density of the particle, $\mathrm{kg/m^3}$
 
+    - `density_ash_true`
+      : true density of ash
 
-│   │   ├── density_particle_apparent_init
-│   │   ├── density_ash_true
-│   │   ├── density_carbon_true
-│   │   └── reactive_surface_init
+    - `density_carbon_true`
+      : 
+    
+    - `reactive_surface_init`
+      : particle initial reactive surface, $\mathrm{m^2}$
+
+      The inital reactive surface is only of interest, if excluded from the other constants, in most cases the pre-exponential factor $\mathrm{A}$ of the Arrhenius equations.
+
+- `[particle.conversion_model]`
+    
+    - `model`
+│   ├── proxymate_analysis
+│   │   ├── fixedcarbon_init
+│   │   └── ash_init
+│   └── reaction
+
 
 
 ### `[environment]`

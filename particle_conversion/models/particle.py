@@ -204,9 +204,6 @@ class Particle_class():
 
         self.effF         = {'O2':0,'CO2':0,'H2O':0}   #-- init
 
-        'Output on console'
-        print('============================================')
-
         #self._adaption_factor = float(PropDict['adaptionfactor'])
 
         #-- Init output dataframe --#
@@ -263,10 +260,10 @@ class Particle_class():
         for i,val in enumerate(self.gas_header):
                 self.gas_comp_dict.update( { val: func_inter(t,self.gas_comp[self.gas_header[val]]) } )
 
-        print(f'Time: {t}, {self.gas_comp_dict}')
         #-- in case the read data is not normalized!
         self.gas_comp_dict = normalize_dict(self.gas_comp_dict)
-        print(f'Time: {t}, {self.gas_comp_dict}')
+        #print(f'Time: {t}, {self.gas_comp_dict}')
+        
         #------------------------------------------#
         #>> (B) check for default conditions
         if self.gas_comp_dict['CO2'] == 1:
@@ -839,10 +836,6 @@ class Particle_class():
 ## ======== ##
 
 def func_inter(timex,data):
-    #time_array = data[0]
-    #func_array = data[1]
-    #funcX = np.interp(timex,data[0],data[1])
-    #return float(funcX)
     return float(np.interp(timex,data[0],data[1]))
 
 ## ======== ##
