@@ -27,22 +27,22 @@ class Particle_class():
             mechanism
     ):
 
-        'PropDict init'
+        # PropDict init
         PropDict = settings['reaction']
 
-        'particle properties'
+        # particle properties
         PropDict['d_p0']          = settings['properties']['particle_diameter_init']
         PropDict['rhop0']         = settings['properties']['density_particle_apparent_init']
         PropDict['rhoa0']         = settings['properties']['density_ash_true']
         PropDict['rho_true_char'] = settings['properties']['density_carbon_true']
         PropDict['sint0']         = settings['properties']['reactive_surface_init']
         
-        'proxymate analysis' 
+        # proxymate analysis
         PropDict['y_fc0']  = settings['proxymate_analysis']['fixedcarbon_init']
         PropDict['y_ash0'] = settings['proxymate_analysis']['ash_init']
         PropDict['Sdevel'] = settings['conversion_model']['model']
 
-        'model properties'
+        # model properties
         PropDict['tauf'] = PropDict.pop('tortuosity-factor')
 
 
@@ -105,20 +105,20 @@ class Particle_class():
         self.ya0 = self.proxi['ash']
         #---------------------------------------------------------------#
 
-        'densities, kg/m3'
+        # densities, kg/m3
         self.rhop0 = float(PropDict['rhop0'])       # apparent particle density, kg/m3
         self.rhoa0 = float(PropDict['rhoa0'])       # true density ash, kg/m3
-        ###
+        
         if 'rho_true_char' in PropDict:
             self.rho_true_char0 = float(PropDict['rho_true_char'])   # true char density
         else:
             self.rho_true_char0 = 1900
-        ###
-        #self.rho_true_c0 = self.yc0 / ((1/self.rho_true_char0) - (self.ya0/self.rhoa0))
-        self.rhoc0 = (1-self.ya0) / (1/self.rhop0 - self.ya0/self.rhoa0) # apparent char(daf) density
+        
+        # apparent char(daf) density
+        self.rhoc0 = (1-self.ya0) / (1/self.rhop0 - self.ya0/self.rhoa0)
 
 
-        'constants for the apparent density and radius change'
+        # constants for the apparent density and radius change
         if self.Sdevelmodel == 'RPM':
             self.alpha = 1
         elif self.Sdevelmodel == 'SPM':
@@ -207,7 +207,7 @@ class Particle_class():
         'Output on console'
         print('============================================')
 
-        self._adaption_factor = float(PropDict['adaptionfactor'])
+        #self._adaption_factor = float(PropDict['adaptionfactor'])
 
         #-- Init output dataframe --#
         header_time = 'Time'
@@ -259,13 +259,14 @@ class Particle_class():
             self.X = X
 
         #------------------------------------------#
-        #>> (A) gas composition
+        #>> (A) gas composition at a specific time
         for i,val in enumerate(self.gas_header):
                 self.gas_comp_dict.update( { val: func_inter(t,self.gas_comp[self.gas_header[val]]) } )
 
+        print(f'Time: {t}, {self.gas_comp_dict}')
         #-- in case the read data is not normalized!
         self.gas_comp_dict = normalize_dict(self.gas_comp_dict)
-
+        print(f'Time: {t}, {self.gas_comp_dict}')
         #------------------------------------------#
         #>> (B) check for default conditions
         if self.gas_comp_dict['CO2'] == 1:
@@ -294,7 +295,7 @@ class Particle_class():
         self.ratep['O2'],self.ratep['CO2'],self.ratep['H2O']   = self.rate_3Rkt()
         self.dXdt = self.ratep['O2'] + self.ratep['CO2'] + self.ratep['H2O']
 
-        self.dXdt = self._adaption_factor * self.dXdt
+        #self.dXdt = self._adaption_factor * self.dXdt
 
         mp   = (1-self.X) * self.mc0 + self.ma0
         dmdt = self.mc0 * self.dXdt
@@ -344,15 +345,15 @@ class Particle_class():
             round(self.effF['O2'], 7),
             round(self.effF['CO2'],7),
             round(self.effF['H2O'],7),
-            round(float(Sh),3),             # Sheerwood
-            round(float(Bscaling), 3),      # Adaption due to Blowing
+            round(float(Sh),3),                  # Sheerwood
+            round(float(Bscaling), 3),           # Adaption due to Blowing
             round(float(self.porosity), 5),
             round(self.Tp,1),
             round(float(self.rhop), 2),
             round(self.dp, 7),
             round(self.ps, 1),
         ]
-        
+
         new_data_row = DataFrame([data_row], columns=self.result.columns)
         self.result = concat([self.result, new_data_row], ignore_index=True)
 
@@ -838,10 +839,11 @@ class Particle_class():
 ## ======== ##
 
 def func_inter(timex,data):
-    time_array = data[0]
-    func_array = data[1]
-    funcX = np.interp(timex,time_array,func_array)
-    return float(funcX)
+    #time_array = data[0]
+    #func_array = data[1]
+    #funcX = np.interp(timex,data[0],data[1])
+    #return float(funcX)
+    return float(np.interp(timex,data[0],data[1]))
 
 ## ======== ##
 ## ======== ##

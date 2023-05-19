@@ -10,7 +10,7 @@ This model simulates the conversion process, based on porous carbonaceous materi
 <!--===============-->
 # About the Project
 
-The project simulates different model approaches for the conversion process of porous carbonaceous particle. The conversion process depends on a variety of property and conditions, like overall pressure.
+The project simulates different model approaches for the conversion process of porous carbonaceous particle. The conversion process depends on a variety of property and conditions, like overall pressure. Be aware that it does only solve the conversion process depending on the input. **No additional equations are solved.** This includes energy or motions related dependencies.
 
 
 <!--===============-->

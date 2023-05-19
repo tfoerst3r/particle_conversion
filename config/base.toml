@@ -65,14 +65,14 @@ steps = 200
 [environment]
 ###################################################
 #co   = ''
-#co2  = ''
+co2   = './docs/exampledata/gas_co2.dat'
 #h2o  = ''
-#o2   = ''
+o2   = './docs/exampledata/gas_o2.dat'
 #n2   = ''
 #ch4  = ''
 #h2   = ''
 #Re   = ''
 #Tg   = ''
-Tp   = './docs/exampledata/p_temperature.dat'
+#Tp   = './docs/exampledata/p_temperature.dat'
 #law  = ''
 ###################################################
