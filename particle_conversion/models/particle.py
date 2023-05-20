@@ -113,11 +113,6 @@ class Particle_class():
         self.rhop0 = float(PropDict['rhop0'])       # apparent particle density, kg/m3
         self.rhoa0 = float(PropDict['rhoa0'])       # true density ash, kg/m3
         
-        #if 'rho_true_char' in PropDict:
-        #    self.rho_true_char0 = float(PropDict['rho_true_char'])   # true char density
-        #else:
-        #    self.rho_true_char0 = 1900
-        
         # apparent char(daf) density
         self.rhoc0 = (1-self.ya0) / (1/self.rhop0 - self.ya0/self.rhoa0)
 
