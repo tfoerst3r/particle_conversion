@@ -72,7 +72,7 @@ def main():
     calculation.calc()
     
     # important call for analysis_zeroD.py to find the EOF
-    print('====EOF====')
+    print('====END====')
 
     sys.exit(0)
 

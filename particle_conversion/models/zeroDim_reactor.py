@@ -234,8 +234,8 @@ class ZEROreactor():
             #print('')
             #print('')
 
-            #-- OUTPUT --#
-            solver_0D_reactor.char.result.sort_values(by=['Time'])
+            #-- WRITE OUTPUT
+            solver_0D_reactor.char.result.sort_values('Time',inplace=True)
             solver_0D_reactor.char.result.to_csv(self.output, sep=',')
 
             self.comp_calc   = [] # reset
