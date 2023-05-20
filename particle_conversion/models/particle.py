@@ -32,14 +32,15 @@ class Particle_class():
         PropDict = settings['reaction']
 
         # particle properties
-        PropDict['d_p0']          = settings['properties']['particle_diameter_init']
-        PropDict['rhop0']         = settings['properties']['density_particle_apparent_init']
-        PropDict['rhoa0']         = settings['properties']['density_ash_true']
-        PropDict['rho_true_char'] = settings['properties']['density_carbon_true']
+        PropDict['d_p0']          = float(settings['properties']['particle_diameter_init'])
+        PropDict['rhop0']         = float(settings['properties']['density_particle_apparent_init'])
+        PropDict['rhoa0']         = float(settings['properties']['density_ash_true'])
+        self.rho_char_init_true   = \
+            PropDict['rho_char_true'] = \
+                settings['properties']['density_char_true'] if 'density_char_true' in settings['properties'] else _defaults['particle']['properties']['density_char_true']
         PropDict['sint0']         = 1 # deprecated should be A = s0 * A*; makes it more feasible
-        PropDict['mechanism']     = _defaults['particle']['properties']['mechanism']
-
-
+        PropDict['mechanism']     = _defaults['numerical']['mechanism']
+        
         # proxymate analysis
         PropDict['y_fc0']  = settings['proxymate_analysis']['fixedcarbon_init']
         PropDict['y_ash0'] = settings['proxymate_analysis']['ash_init']
@@ -112,10 +113,10 @@ class Particle_class():
         self.rhop0 = float(PropDict['rhop0'])       # apparent particle density, kg/m3
         self.rhoa0 = float(PropDict['rhoa0'])       # true density ash, kg/m3
         
-        if 'rho_true_char' in PropDict:
-            self.rho_true_char0 = float(PropDict['rho_true_char'])   # true char density
-        else:
-            self.rho_true_char0 = 1900
+        #if 'rho_true_char' in PropDict:
+        #    self.rho_true_char0 = float(PropDict['rho_true_char'])   # true char density
+        #else:
+        #    self.rho_true_char0 = 1900
         
         # apparent char(daf) density
         self.rhoc0 = (1-self.ya0) / (1/self.rhop0 - self.ya0/self.rhoa0)
@@ -123,9 +124,9 @@ class Particle_class():
         # constants for the apparent density and radius change
         if self.Sdevelmodel == 'RPM':
             self.alpha = 1
-        elif self.Sdevelmodel == 'SPM':
+        elif self.Sdevelmodel == 'SPM' or self.Sdevelmodel == 'SPMp':
             self.alpha = 0
-        elif self.Sdevelmodel == 'SDM' or self.Sdevelmodel == 'SDMstd':
+        elif self.Sdevelmodel == 'SDM' or self.Sdevelmodel == 'SDMp':
             self.alpha = 1
         #else:
         #    self.alpha = float(PropDict['alpha'])
@@ -513,15 +514,17 @@ class Particle_class():
     @property
     def rhop_true(self):
         # true density of the particle
-        true_value = self.rho_true_char0
-        #return 1/( (1-self.ya0)/self.rho_true_carbon + self.ya0/self.rhoa0)
-        return true_value
+        return self.rho_char_init_true
 
     #=============#
     #=============#
 
     @property
     def porosity(self):
+        """
+        Particle porosity.
+        The porosity keeps constant with the current implementation.
+        """
         return 1 - self.rhop/self.rhop_true
 
     #=============#
