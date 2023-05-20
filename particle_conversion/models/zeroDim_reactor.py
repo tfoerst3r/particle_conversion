@@ -20,7 +20,7 @@ class ZEROreactor():
         self.steps    = settings["numerical"]["steps"] if "steps" in settings["numerical"].keys() else _defaults["numerical"]["steps"]
         
         # Simulation basic boundary conditions
-        self.default_temp = settings["reactor"]["default_temp"] if "default_temp" in settings["reactor"].keys() else _defaults["reactor"]["default_temp"]
+        self.default_temp = settings["reactor"]["fallback_temp"] if "fallback_temp" in settings["reactor"].keys() else _defaults["reactor"]["fallback_temp"]
         self.fallback_gas = settings["reactor"]["fallback_gas"] if "fallback_gas" in settings["reactor"].keys() else _defaults["reactor"]["fallback_gas"]
 
         # Particle transient environment

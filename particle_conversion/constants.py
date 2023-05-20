@@ -12,7 +12,7 @@ _defaults = {
         'mechanism': 'gri30.cti'
     },
     'reactor': {
-        'default_temp': 1273.15, #K
+        'fallback_temp': 1273.15, #K
         'fallback_gas': 'CO2',
         'reactor_pressure': 1e5 #Pa
     },
@@ -32,7 +32,8 @@ _defaults = {
     'particle':{
         'properties': {
             'particle_init_conversion': 0.0,
-            'mechanism': 'gri30.cti'
+            'density_char_true': 1900.0,
+
         }
     }
 }
