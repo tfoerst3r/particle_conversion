@@ -10,7 +10,8 @@
             "request": "launch",
             "program": "./particle_conversion/__main__.py",
             "args": [
-                "--config_file", "./config/base.toml",
+                "--config", "./config/base.toml",
+                "--output", "./base_output.csv",
             ],
             "console": "integratedTerminal"
         },

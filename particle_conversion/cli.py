@@ -63,11 +63,12 @@ def main():
     settings = load_config(args.config)
     output = args.output
 
+    print('===START===')
     calculation = ZEROreactor(settings,output)
     calculation.calc()
     
     # important call for analysis_zeroD.py to find the EOF
-    print('===EOF===')
+    print('====EOF====')
 
     sys.exit(0)
 

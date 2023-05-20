@@ -212,7 +212,6 @@ class ZEROreactor():
                 others_header               = self._others_header,
                 others_flags                = self._others_flags,
                 others                      = self.others_calc,
-                output_filename             = self.output
             )
 
             #-----------------------------------------------------
@@ -231,6 +230,8 @@ class ZEROreactor():
             #print('')
             #print('')
 
+            #-- OUTPUT --#
+            solver_0D_reactor.char.result.sort_values(by=['Time'])
             solver_0D_reactor.char.result.to_csv(self.output, sep=',')
 
             self.comp_calc   = [] # reset

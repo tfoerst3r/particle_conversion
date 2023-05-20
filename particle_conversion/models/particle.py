@@ -16,7 +16,6 @@ from particle_conversion.constants import _defaults
 class Particle_class():
     def __init__(self, 
             settings,
-            output,
             gas_header,
             gas_flags,
             gas_comp,
@@ -24,7 +23,6 @@ class Particle_class():
             others_flags,
             others,
             ptot,
-            mechanism
     ):
 
         'PropDict init'
@@ -35,8 +33,10 @@ class Particle_class():
         PropDict['rhop0']         = settings['properties']['density_particle_apparent_init']
         PropDict['rhoa0']         = settings['properties']['density_ash_true']
         PropDict['rho_true_char'] = settings['properties']['density_carbon_true']
-        PropDict['sint0']         = settings['properties']['reactive_surface_init']
-        
+        PropDict['sint0']         = 1 # deprecated should be A = s0 * A*; makes it more feasible
+        PropDict['mechanism']     = _defaults['particle']['properties']['mechanism']
+
+
         'proxymate analysis' 
         PropDict['y_fc0']  = settings['proxymate_analysis']['fixedcarbon_init']
         PropDict['y_ash0'] = settings['proxymate_analysis']['ash_init']
@@ -47,7 +47,7 @@ class Particle_class():
 
 
         #.. gas phase properties
-        self.gas = ct.Solution(mechanism)
+        self.gas = ct.Solution(PropDict['mechanism'])
         self.gas.transport_model = 'Multi'
 
         self._gas_const  = ct.gas_constant/1000   # gas constant 8.3144 J/mol.K
@@ -204,10 +204,7 @@ class Particle_class():
 
         self.effF         = {'O2':0,'CO2':0,'H2O':0}   #-- init
 
-        'Output on console'
-        print('============================================')
-
-        self._adaption_factor = float(PropDict['adaptionfactor'])
+        #self._adaption_factor = float(PropDict['adaptionfactor'])
 
         #-- Init output dataframe --#
         header_time = 'Time'
@@ -294,7 +291,7 @@ class Particle_class():
         self.ratep['O2'],self.ratep['CO2'],self.ratep['H2O']   = self.rate_3Rkt()
         self.dXdt = self.ratep['O2'] + self.ratep['CO2'] + self.ratep['H2O']
 
-        self.dXdt = self._adaption_factor * self.dXdt
+        #self.dXdt = self._adaption_factor * self.dXdt
 
         mp   = (1-self.X) * self.mc0 + self.ma0
         dmdt = self.mc0 * self.dXdt
@@ -337,15 +334,15 @@ class Particle_class():
             round(float(self.dXdt),9),
             round(float(self.ratep['O2']), 7),
             round(float(self.ratep['CO2']),7),
-            round(float(self.ratep['H2O']),7),
+            round(float(self.ratep['H2O']),7),  #
             round(self.C1['O2'],  17),
             round(self.C1['CO2'], 17),
             round(self.C1['H2O'], 17),
             round(self.effF['O2'], 7),
             round(self.effF['CO2'],7),
             round(self.effF['H2O'],7),
-            round(float(Sh),3),             # Sheerwood
-            round(float(Bscaling), 3),      # Adaption due to Blowing
+            round(float(Sh),3),                 # Sheerwood
+            round(float(Bscaling), 3),          # Adaption due to Blowing
             round(float(self.porosity), 5),
             round(self.Tp,1),
             round(float(self.rhop), 2),
@@ -568,21 +565,31 @@ class Particle_class():
                 ss0 = 1
             else:
                 ss0 = pow(1 - self.psi1 * np.log(1. - self.X), 0.5)
+
         elif self.Sdevelmodel == 'SPM':
             if self.X == 1:
                 ss0 = 1
             else:
+                ss0 = pow( (1-self.X) , -1/3)
+
+        elif self.Sdevelmodel == 'SPMp':
+            if self.X == 1:
+                ss0 = 1
+            else:
                 ss0 = pow( oneMXp , -1/3)
+
         elif self.Sdevelmodel == 'SDM':
             if self.X == 1:
                 ss0 = 0
             else:
-                ss0 = pow( oneMXp , -1)
-        elif self.Sdevelmodel == 'SDMstd':
+                ss0 = pow( (1-self.X) , -1)
+
+        elif self.Sdevelmodel == 'SDMp':
             if self.X == 1:
                 ss0 = 0
             else:
-                ss0 = pow( (1-self.X) , -1)
+                ss0 = pow( oneMXp , -1)
+
         else:
             raise IOError('Unkown Methode')
 
@@ -838,10 +845,7 @@ class Particle_class():
 ## ======== ##
 
 def func_inter(timex,data):
-    time_array = data[0]
-    func_array = data[1]
-    funcX = np.interp(timex,time_array,func_array)
-    return float(funcX)
+    return float(np.interp(timex,data[0], data[1]))
 
 ## ======== ##
 ## ======== ##

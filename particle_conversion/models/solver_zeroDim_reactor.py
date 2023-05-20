@@ -16,7 +16,6 @@ class Solver_class():
         others_header,
         others_flags,
         others,
-        output_filename
     ):
         self.comp_header = comp_header
         self.comp_flags = comp_flags
@@ -24,11 +23,7 @@ class Solver_class():
         self.others_header = others_header
         self.others_flags = others_flags
         self.others = others
-        self.output_filename=output_filename
 
-        #.. homogeneous mechanism
-        self.mechanism = settings["numerical"]["mechanism"] if "mechanism" in settings["numerical"].keys() else _defaults["numerical"]["mechanism"]
-        
         #.. numerical settings
         self.X_end = settings["numerical"]["conversion_final"] if "conversion_final" in settings["numerical"].keys() else _defaults["numerical"]["conversion_final"]
         self.X0 = settings["numerical"]["conversion_init"] if "conversion_init" in settings["numerical"].keys() else _defaults["numerical"]["conversion_init"]
@@ -42,7 +37,6 @@ class Solver_class():
         #-- char particle object initialisation
         self.char = Particle_class(
             settings=settings['particle'],
-            output=self.output_filename,
             gas_header=comp_header,
             gas_flags=comp_flags,
             gas_comp=comp,
@@ -50,7 +44,6 @@ class Solver_class():
             others_flags=others_flags,
             others=others,
             ptot=self.ptot,
-            mechanism=self.mechanism
         )
         #-------------------------------------#
 
