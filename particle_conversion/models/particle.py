@@ -5,18 +5,17 @@
 __author__ = 'tf'
 
 import numpy as np
-from pandas import concat, Series, DataFrame
-import csv
-from scipy.optimize import bisect
-#-- math.pow always returns a float -> no extra float() calls needed!
-from math import pow as pow
-from particle_conversion.models.diffusion import DiffusionCoeff
 import cantera as ct
+from pandas import concat, Series, DataFrame
+from scipy.optimize import bisect
+from math import pow 
+
+from particle_conversion.models.diffusion import DiffusionCoeff
 from particle_conversion.constants import _defaults
+from particle_conversion.utils import func_inter, normalize_dict
 
-## ======== ##
-# TODO remove total effectivenes because it is wrong
 
+## CLASS DEFINITION ##
 class Particle_class():
     def __init__(self, 
             settings,
@@ -60,7 +59,7 @@ class Particle_class():
         self.gas_flags   = gas_flags
         self.gas_default = ''
         self.gas_comp_dict = { 'CO':0, 'CO2':0, 'H2O':0, 'O2':0, 'N2':0, 'CH4':0, 'H2':0 }
-        self.diffC = DiffusionCoeff(mechanism)   # init class definition
+        self.diffC = DiffusionCoeff(PropDict['mechanism'])   # init class definition
         self.gas_default_diff_partner = { 'CO2':{'CO':0},'O2':{'CO2':0},'H2O':{'CO':0.0,'H2':0.0} }
 
         'others, Re,Pr,Tg,Tp'
@@ -120,7 +119,6 @@ class Particle_class():
         
         # apparent char(daf) density
         self.rhoc0 = (1-self.ya0) / (1/self.rhop0 - self.ya0/self.rhoa0)
-
 
         # constants for the apparent density and radius change
         if self.Sdevelmodel == 'RPM':
@@ -244,12 +242,13 @@ class Particle_class():
         #################
 
 
-    ##################
-    ## Model Solver ##
-    ##################
+    ###################
+    ## Class Methods ##
+    ###################
+    
     def conv(self,t,y):
         '''
-        This function will be solved by the ODE proceedure
+        This function will be solved by the ODE proceedure, conv..conversion
         '''
 
         X = y  # Carbon conversion, -
@@ -259,17 +258,16 @@ class Particle_class():
         else:
             self.X = X
 
-        #------------------------------------------#
-        #>> (A) gas composition at a specific time
+        #--------------------------------------------#
+        #-- (A) gas composition at a specific time --#
         for i,val in enumerate(self.gas_header):
                 self.gas_comp_dict.update( { val: func_inter(t,self.gas_comp[self.gas_header[val]]) } )
 
         #-- in case the read data is not normalized!
         self.gas_comp_dict = normalize_dict(self.gas_comp_dict)
-        #print(f'Time: {t}, {self.gas_comp_dict}')
         
-        #------------------------------------------#
-        #>> (B) check for default conditions
+        #--------------------------------------------#
+        #-- (B) check for default conditions --------#
         if self.gas_comp_dict['CO2'] == 1:
             self.gas_default = 'CO2'
         elif self.gas_comp_dict['H2O'] == 1:
@@ -278,13 +276,14 @@ class Particle_class():
             self.gas_default = 'O2'
 
 
-        #------------------------------------------#
-        #>> (C) generate other properties
+        #--------------------------------------------#
+        #-- (C) generate other properties -----------#
         self.Re = func_inter(t,self.others[self.others_header['Re']])  # Reynolds number, -
         self.Tg = func_inter(t,self.others[self.others_header['Tg']])  # Gas temperature, K
         self.Tp = func_inter(t,self.others[self.others_header['Tp']])  # Gas temperature, K
         self.gas.TPX = self.Tg,self.ptot,self.gas_comp_dict
-        #>> Prandtl number, -
+        
+        #-- Prandtl number, -
         #[Pr] = [-] = kg/m.s * J/kg.K * s.m.K/J
         #     = [-] = (m2 kg J m K) / (s m3 kg K W) =  m2/s * kg/m3 * J/(kg.K) / W/(m.K)
         #       gas.viscosity, Pa.s (dyn. visco not kin. visco)
@@ -293,46 +292,20 @@ class Particle_class():
 
         #--------------------------------------------------------------------------#
         #-- (D) reaction rate, 1/s, R ... dXdt = dX1/dt + dX2/dt + dX3/dt ---------#
-        self.ratep['O2'],self.ratep['CO2'],self.ratep['H2O']   = self.rate_3Rkt()
-
-
-
+        self.ratep['O2'],self.ratep['CO2'],self.ratep['H2O'] = self.rate_3Rkt()
         self.dXdt = self.ratep['O2'] + self.ratep['CO2'] + self.ratep['H2O']
 
-        #self.dXdt = self._adaption_factor * self.dXdt
-
-        mp   = (1-self.X) * self.mc0 + self.ma0
-        dmdt = self.mc0 * self.dXdt
-
+        
+        #--------------------------------------------#
+        #-- (E) output ------------------------------#
+        #.. particle mass, kg
+        mp          = (1-self.X) * self.mc0 + self.ma0
+        #.. conversion particle mass, kg/s
+        dmdt        = self.mc0 * self.dXdt
+        #.. Sherwood number, Adaption due to Blowing
         Sh,Bscaling = self.Sheerwood(flag=True)
-        #------------------------------------------#
-        #-- (E) output
-        #if t == 0:
 
-        #    header = [
-        #        '==='
-        #        'Time',         # 01
-        #        'mp',           # 02
-        #        'dmpdt',        # 03
-        #        'X',            # 04
-        #        'dXdt',         # 05
-        #        'dXdt_O2',      # 06
-        #        'dXdt_CO2',     # 07
-        #        'dXdt_H2O',     # 08
-        #        'C1_O2',        # 09
-        #        'C1_CO2',       # 10
-        #        'C1_H2O',       # 11
-        #        'effF_O2',      # 12
-        #        'effF_CO2',     # 13
-        #        'effF_H2O',     # 14
-        #        'Sh',           # 15
-        #        'Bscaling',     # 16
-        #        'porosity',     # 17
-        #        'Tp',           # 18
-        #        'rhop',         # 19
-        #        'dp',           # 20
-        #        'ps',           # 21
-        #    ]
+        #.. ps: partial pressure of reactive gas at the surface, defined by Pi_surface()
 
         data_row = [
             round(float(t),8),                  # time, s
@@ -343,19 +316,19 @@ class Particle_class():
             round(float(self.ratep['O2']), 7),  # change in carbon conversion for C+O2, kg/kg 1/s 
             round(float(self.ratep['CO2']),7),  # change in carbon conversion for C+CO2, kg/kg 1/s
             round(float(self.ratep['H2O']),7),  # change in carbon conversion for C+H2O, kg/kg 1/s
-            round(self.C1['O2'],  17),
-            round(self.C1['CO2'], 17),
-            round(self.C1['H2O'], 17),
-            round(self.effF['O2'], 7),
-            round(self.effF['CO2'],7),
-            round(self.effF['H2O'],7),
-            round(float(Sh),3),                 # Sheerwood
+            round(self.C1['O2'],  17),          # Diffusion Rate Constant for O2
+            round(self.C1['CO2'], 17),          # Diffusion Rate Constant for CO2
+            round(self.C1['H2O'], 17),          # Diffusion Rate Constant for H2O
+            round(self.effF['O2'], 7),          # effectiveness factor for O2
+            round(self.effF['CO2'],7),          # effectiveness factor for CO2
+            round(self.effF['H2O'],7),          # effectiveness factor for H2O
+            round(float(Sh),3),                 # Sheerwood number
             round(float(Bscaling), 3),          # Adaption due to Blowing
-            round(float(self.porosity), 5),
-            round(self.Tp,1),
-            round(float(self.rhop), 2),
-            round(self.dp, 7),
-            round(self.ps, 1),
+            round(float(self.porosity), 5),     # Porosity development, m3/m3
+            round(self.Tp,1),                   # particle Temperature, K
+            round(float(self.rhop), 2),         # particle density, kg/m3
+            round(self.dp, 7),                  # particle diameter, m
+            round(self.ps, 1),                  # partial pressure at the surface, only feaseable for one component reactive gas
         ]
 
         new_data_row = DataFrame([data_row], columns=self.result.columns)
@@ -374,114 +347,112 @@ class Particle_class():
         r = eta * k0 * exp(E/R.T) * Pi^n * S/m
         :return:
         '''
-        self.update_reactive_specie('O2')
+
+        def rate():
+             #-- Be aware that sint0 is included in kin[0]
+             #-- Definition identical to Kajitani
+             #-- dX/dt = eta * r_S * (1-X) * s_r
+             #   1/s = 1/s.Pa^n * Pa^n * kg/kg * m2/m2
+             #-- is identical to the assumption by DeYoung p.40 dXC/dt -> 1/Sr dmC/dt
+             #---------------------------------
+
+             effF = self.effF[self.name_reactive_specie]
+             r_S  = self.kinetic_rate_coeff * pow(self.ps, self.kin[2])
+             ns_r = self.normalized_Area
+
+             rate = effF * r_S * (1-self.X) * ns_r
+
+             return rate
+        
+        #=============#
+        
+        def update_reactive_specie(reactive_specie):
+            '''
+            Sets global values:
+            '''
+
+            #-----------------------------------------------------------------#
+            #>> Error handling
+            if ((reactive_specie=='O2') or (reactive_specie=='H2O') or (reactive_specie=='CO2')):
+                self.name_reactive_specie=reactive_specie
+            else:
+                raise IOError('WARNING: No update, as no known reactive species is selected ')
+
+            #-----------------------------------------------------------------#
+            #>> Set partial pressure of the given species
+            self.pg = self.gas_comp_dict[self.name_reactive_specie] * self.ptot
+
+            #-----------------------------------------------------------------#
+            #>> update heterogeneous kinetic parameters
+            if self.name_reactive_specie == 'O2':
+
+                if self.pg > 0:
+                    #>> constants set!
+                    self.kin = self.kin_R1 # set Arrhenius expressions A,E,n
+
+                    self.stoichio=0.5
+                    self.psi1 = self.psi0[self.name_reactive_specie]
+
+                    #>> dervived values!
+                    self.ps = self.Pi_surface()
+                    self.effF[self.name_reactive_specie] = self.effectivenessFactor(self.ps)
+
+            elif self.name_reactive_specie == 'CO2':
+
+                if self.pg > 0:
+                    #>> constants set!
+                    self.kin = self.kin_R2
+                    self.stoichio=1.0
+                    self.psi1 = self.psi0[self.name_reactive_specie]
+
+                    #>> dervived values!
+                    self.ps = self.Pi_surface()
+                    self.effF[self.name_reactive_specie] = self.effectivenessFactor(self.ps)
+
+
+            elif self.name_reactive_specie == 'H2O':
+
+                if self.pg > 0:
+                    #>> constants set!
+                    self.kin = self.kin_R3
+                    self.stoichio=1.0
+                    self.psi1 = self.psi0[self.name_reactive_specie]
+
+                    #>> dervived values!
+                    self.ps = self.Pi_surface()
+                    self.effF[self.name_reactive_specie] = self.effectivenessFactor(self.ps)
+
+            return 0
+        
+        #=============#
+
+        update_reactive_specie('O2')
         if self.pg > 0:
-            R1 = self.rate()
+            R1 = rate()
         elif self.pg == 0:
             R1 = 0
         elif self.pg < 0:
             raise IOError('Negative partial pressure')
         #-----
-        self.update_reactive_specie('CO2')
+        update_reactive_specie('CO2')
         if self.pg > 0:
-            R2 = self.rate()
+            R2 = rate()
         elif self.pg == 0:
             R2 = 0
         elif self.pg < 0:
             raise IOError('Negative partial pressure')
         #-----
-        self.update_reactive_specie('H2O')
+        update_reactive_specie('H2O')
         if self.pg > 0:
-            R3 = self.rate()
+            R3 = rate()
         elif self.pg == 0:
             R3 = 0
         elif self.pg < 0:
             raise IOError('Negative partial pressure')
         #-----
-        # 1/s * J/kg / 1/s
+        # 1/s * ((J/kg) / (1/s))
 
         return float(R1),float(R2),float(R3)
-
-    #=============#
-    #=============#
-
-    def update_reactive_specie(self,reactive_specie):
-        '''
-        Sets global values:
-        '''
-
-        #-----------------------------------------------------------------#
-        #>> Error handling
-        if ((reactive_specie=='O2') or (reactive_specie=='H2O') or (reactive_specie=='CO2')):
-            self.name_reactive_specie=reactive_specie
-        else:
-            raise IOError('WARNING: No update, as no known reactive species is selected ')
-
-        #-----------------------------------------------------------------#
-        #>> Set partial pressure of the given species
-        self.pg = self.gas_comp_dict[self.name_reactive_specie] * self.ptot
-
-        #-----------------------------------------------------------------#
-        #>> update heterogeneous kinetic parameters
-        if self.name_reactive_specie == 'O2':
-
-            if self.pg > 0:
-                #>> constants set!
-                self.kin = self.kin_R1 # set Arrhenius expressions A,E,n
-
-                self.stoichio=0.5
-                self.psi1 = self.psi0[self.name_reactive_specie]
-
-                #>> dervived values!
-                self.ps = self.Pi_surface()
-                self.effF[self.name_reactive_specie] = self.effectivenessFactor(self.ps)
-
-        elif self.name_reactive_specie == 'CO2':
-
-            if self.pg > 0:
-                #>> constants set!
-                self.kin = self.kin_R2
-                self.stoichio=1.0
-                self.psi1 = self.psi0[self.name_reactive_specie]
-
-                #>> dervived values!
-                self.ps = self.Pi_surface()
-                self.effF[self.name_reactive_specie] = self.effectivenessFactor(self.ps)
-
-
-        elif self.name_reactive_specie == 'H2O':
-
-            if self.pg > 0:
-                #>> constants set!
-                self.kin = self.kin_R3
-                self.stoichio=1.0
-                self.psi1 = self.psi0[self.name_reactive_specie]
-
-                #>> dervived values!
-                self.ps = self.Pi_surface()
-                self.effF[self.name_reactive_specie] = self.effectivenessFactor(self.ps)
-
-
-        return 0
-
-    #=============#
-    #=============#
-
-    def rate(self):
-        #-- Be aware that sint0 is included in kin[0]
-        #-- Definition identical to Kajitani
-        #-- dX/dt = eta * r_S * (1-X) * s_r
-        #   1/s = 1/s.Pa^n * Pa^n * kg/kg * m2/m2
-        #-- is identical to the assumption by DeYoung p.40 dXC/dt -> 1/Sr dmC/dt
-        #---------------------------------
-
-        effF = self.effF[self.name_reactive_specie]
-        r_S  = self.kinetic_rate_coeff * pow(self.ps, self.kin[2])
-        ns_r = self.normalized_Area
-
-        rate = effF * r_S * (1-self.X) * ns_r
-
-        return rate
 
     #=============#
     #=============#
@@ -497,7 +468,8 @@ class Particle_class():
 
         return kinConst
 
-    #-----------
+    #=============#
+    #=============#
 
     @property
     def dp(self):
@@ -506,39 +478,37 @@ class Particle_class():
         #>> beta = 1/3 shinking particle , beta = 0 shrinking density
         return self.dp0 * pow( (1.-self.X), self.beta )
 
-    #-----------
+    #=============#
+    #=============#
 
     @property
     def rhoc(self):
         # apparent density of char fraction, kg/m^3
-        # TODO is this right?
         return self.rhoc0 * pow((1.-self.X),self.alpha)
 
-    #-----------
+    #=============#
+    #=============#
 
     @property
     def rhop(self):
         # apparent density of particle, particle density
         # rhoc and rhoa0 should be also apperent densities
-
-     #   rhop = 1/( (1-self.ya0)/self.rhoc + self.ya0/self.rhoa0 )
+        # rhop = 1/( (1-self.ya0)/self.rhoc + self.ya0/self.rhoa0 )
 
         def oneminusXp(X=self.X,wc0=self.yc0):
             return wc0 * ((1-X) + (1/wc0 -1))
 
-        if self.Sdevelmodel=='SDM' or self.Sdevelmodel=='RPM' or self.Sdevelmodel=='SDMstd':
-            rhop = self.rhop0 * oneminusXp()
-        elif self.Sdevelmodel == 'SPM':
+        if self.Sdevelmodel == 'SPM' or self.Sdevelmodel == 'SPMp':
             rhop = self.rhop0
-        ##elif self.Sdevelmodel=='RPM':
-        ##    if self.rhoc == 0:
-        ##        rhop = 1/( self.ya0/self.rhoa0 )
-        ##    else:
-        ##        rhop = 1/( (1-self.ya0)/self.rhoc + self.ya0/self.rhoa0 )
+        elif self.Sdevelmodel=='SDM' or self.Sdevelmodel=='RPM' or self.Sdevelmodel=='SDMp':
+            rhop = self.rhop0 * oneminusXp()
+        else:
+            KeyError('Model not available!')
 
         return rhop
 
-    #-----------
+    #=============#
+    #=============#
 
     @property
     def rhop_true(self):
@@ -547,14 +517,16 @@ class Particle_class():
         #return 1/( (1-self.ya0)/self.rho_true_carbon + self.ya0/self.rhoa0)
         return true_value
 
-    #-----------
+    #=============#
+    #=============#
 
     @property
     def porosity(self):
         return 1 - self.rhop/self.rhop_true
 
+    #=============#
+    #=============#
 
-    #--------------------------------------------------#
     @property
     def normalized_Area(self):
         # >> s/s0 = (S/m)/(S/m)_0 = m2/m2<<#
@@ -603,7 +575,8 @@ class Particle_class():
 
         return ss0
 
-    #--------------------------------------------------#
+    #=============#
+    #=============#
 
     @property
     def diff_coeff(self):
@@ -661,27 +634,8 @@ class Particle_class():
         Effectivenes factor (Porennutzungsgrad)
         '''
 
-        def D_eff(
-                D=self.diff_coeff,
-                eps1 = self.porosity,
-                tauf=self.tauf
-                ):
-            #eps1 = self.eps1,
-            # Knudsen diffusion is optional !!!
-            # pore diamter, m
-            # d_pore = 2e-6
-            # Knudsen Diffusivity
-            # D_Kn = d_pore / 3. * pow(8 * 8.314 * self.Tp / (math.pi * M), 0.5)
-            # --------------------
-            # effective diffusivity (macroscopic)
-            # De_pore = 1. / (1. / self.Diff_Coeff() + 1. / D_Kn)
-            # --------------------
-            # return De_pore * self.eps1 / self.tauf  # *porosity/structure-parameter (=tortuosity*constriction-factor)
-            # return self.Diff_Coeff() * self.porosity() / self.tauf  # *porosity/structure-parameter (=tortuosity*constriction-factor)
-            # tauf .. porosity/structure-parameter (=tortuosity*constriction-factor)
-
+        def D_eff(D=self.diff_coeff, eps1=self.porosity, tauf=self.tauf):
             return eps1 * D * tauf
-
 
         def thielemodulus(
             dp       = self.dp,
@@ -788,23 +742,19 @@ class Particle_class():
 
         return Sh,scaling
 
+    #============#
+    #============#
 
-    def Func(self,PS):
+    def Pi_surface(self):
 
-        #---------------------------------------------
-        #-- Diffusion rate equals Kinetic rate
+        def Func(PS):
 
-        k_diff = self.diffusion_rate_coeff
-        k_rate = self.kinetic_rate_coeff
-        eta    = self.effectivenessFactor(ps=PS)
-
-        #-------------------------------------------
-
-        #if self.Sdevelmodel == 'RPM':
-        if self.Sdevelmodel == 'RPM' or self.Sdevelmodel == 'SDM' or self.Sdevelmodel == 'SPM' or self.Sdevelmodel == 'SDMstd':
-            #>> One Film Model, Bader 2018 approach
-            #>> diffRate = 1/(1-X) dX/dt = 1/m * dm/dt [=] 1/s = 1/kg * kg/s = kg/m2.Pa.s * Pa * m3/kg.m
-            #>> poreRate = 1/(1-X) dX/dt = 1/m * dm/dt [=] 1/s = 1/s.Pa^n Pa^n
+            #---------------------------------------------
+            #-- Diffusion rate equals Kinetic rate
+            k_diff = self.diffusion_rate_coeff
+            k_rate = self.kinetic_rate_coeff
+            eta    = self.effectivenessFactor(ps=PS)
+            #-------------------------------------------
             ptot = self.ptot
             xi_inf = self.pg / ptot  # -- species i mole fraction in the gas phase mol/mol
             xi_s = PS / ptot         # -- species i mole fraction at the surface mol/mol
@@ -814,29 +764,18 @@ class Particle_class():
             #-----
             diffRate = k_diff * ptot * np.log((1+xi_inf)/(1+xi_s)) * 6/(rhoc*dp)
             kinRate  = eta * k_rate * pow(PS, self.kin[2]) * ns_r
+            #-------------------------------------------
+            diff = kinRate - diffRate
 
-        elif self.Sdevelmodel == 'SDM' or self.Sdevelmodel == 'SPM' or self.Sdevelmodel == 'SDMstd':
-            #>> Fluent approach
-            #>> diffRate = 1/S * dm/dt [=] kg/m2.s = kg/m2.Pa.s * Pa
-            #>> kinRate  = 1/S * dm/dt [=] kg/m2.s = 1/s.Pa^n * Pa^n * kg/m3 * m
-            diffRate = k_diff * (self.pg - PS)
-            kinRate  = eta * k_rate * pow(PS, self.kin[2]) * self.rhop0 * self.dp0/6
+            return diff
 
-        #-------------------------------------------
-        diff = kinRate - diffRate
+        #=========#
 
-        return diff
-
-
-    ## ======== ##
-    ## ======== ##
-
-    def Pi_surface(self):
         if self.pg > 0:
             min_PS=0
             max_PS=self.pg
             ps = bisect(
-                self.Func,
+                Func,
                 min_PS,
                 max_PS,
                 xtol=1e-12, rtol=10e-16, maxiter=100, full_output=False, disp=True)
@@ -845,93 +784,4 @@ class Particle_class():
 
         return ps
 
-
-
-
-
-## ======== ##
-## ======== ##
-
-def func_inter(timex,data):
-    return float(np.interp(timex,data[0], data[1]))
-
-
-## ======== ##
-## ======== ##
-
-def normalize_dict(inquiry: dict):
-
-    if not inquiry:
-        print('>>> Warning! Dictionary was empty! <<<')
-        return {}
-
-    inquiry_new = {}
-
-    try:
-        for i,value in enumerate(dict(inquiry)):
-            inquiry_new[value] = inquiry[value]
-    except TypeError:
-        error_string = 'Not a dictionary type class!'
-        raise TypeError(error_string)
-
-
-    for i,(valA,valB) in enumerate(inquiry_new.items()):
-        if type(valB)!=float and type(valB)!=int:
-            raise ValueError(valB,'is not a number')
-        if float(valB) < 0:
-            print ('Input is negative. They are ignored!')
-            continue
-
-    sum = 0
-    for i,(valA,valB) in enumerate(inquiry_new.items()):
-        if valB < 0:
-            valB = 0
-        sum += valB
-
-    for i,(valA,valB) in enumerate(inquiry_new.items()):
-        inquiry_new[valA] = valB/sum
-
-    return inquiry_new
-
-
-
-
-
-
-# self._sint1 = float(PropDict['sint1'])
-#    @property
-#    def sint1(self):
-#        if self._sint0 == 1:
-#            if self._sint1 == 1:
-#                value = 200000
-#            else:
-#                value = self._sint1
-#        else:
-#            value = self._sint0
-#
-#        value = value * self.normalized_Area
-#
-#        return value
-#
-#    #-----------
-
-#    @property
-#    def effFstar(self):
-#
-#        sex = 6 / (self.rhop * self.dp)
-#        sin = self.sint1
-#
-#        effF = self.effectivenessFactor(ps=self.ps)
-#
-#        # >> fluent effectivness
-#        k_diff = self.diffusion_rate_coefficient()
-#        k_rate = self.kinetic_coeff
-#
-#        if effF < 0.025:
-#            effFstar = 1.0
-#        else:
-#            effFstar = float(effF + sex / (effF * sin + sex))
-#
-#        return effFstar
-
-
+##== END of Class Definition ==##
