@@ -5,7 +5,6 @@
 [reactor]
 ###################################################
 fallback_temp = 1643 #K
-#fallback_gas = 'CO2'
 reactor_pressure = 20e5 #Pa
 ###################################################
 
@@ -19,7 +18,7 @@ density_char_true = 2270 #kg/m3
 
 [particle.conversion_model]
 ###################################################
-model = 'SDM'
+model = 'SDMp'
 ###################################################
 
 [particle.proxymate_analysis]
@@ -51,7 +50,7 @@ Ea_R3  = 2.28e+5
 n_R3   = 0.4
 psi_R3 = 0.0
 #.. structural char pore parameter
-tortuosity-factor = 0.1
+tortuosity-factor = 0.08
 ###################################################
 
 [numerical]

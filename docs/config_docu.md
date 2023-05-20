@@ -172,7 +172,9 @@ o2  = './data/particle_1234/gas_o2.out'
 
 # Example
 
-In the following is a basic example of a `<name>.toml` configuration file.
+## Basic Example 
+
+In the following is a basic example with the name, e.g `base.toml`. The same file can be found in the `./config/` folder.
 
 ```
 [reactor]
@@ -221,6 +223,88 @@ calctime = 3.0
 [environment]
 
 ```
+
+## Advanced example
+
+In the following is a more advanced setup with the name, e.g `inj.toml`. The same file can be found in the `./config/` folder.
+
+```
+[reactor]
+###################################################
+fallback_temp = 1643 #K
+reactor_pressure = 20e5 #Pa
+###################################################
+
+[particle.properties]
+###################################################
+particle_diameter_init = 76e-6 #m
+density_particle_apparent_init = 727 #kg/m3
+density_ash_true = 2580 #kg/m3
+density_char_true = 2270 #kg/m3
+###################################################
+
+[particle.conversion_model]
+###################################################
+model = 'SDMp'
+###################################################
+
+[particle.proxymate_analysis]
+###################################################
+fixedcarbon_init= 0.8342
+ash_init = 0.1658
+###################################################
+
+[particle.reaction]
+###################################################
+#.. Dummys
+A=1.38e+1
+Ea=1.38e+8
+n=0.8
+psi_R0=0.0
+#.. Reaction 1: C + 0.5 O2 -> CO 
+A_R1   = 4.95392582e+02
+Ea_R1  = 1.38e+5
+n_R1   = 0.8
+psi_R1 = 0.0
+#.. Reaction 2: C + CO2 -> 2 CO
+A_R2   = 5.87769389e+07
+Ea_R2  = 2.89e+5
+n_R2   = 0.4
+psi_R2 = 0.0
+#.. Reaction 3: C + H2O -> CO + H2
+A_R3   = 2.04054428e+06  
+Ea_R3  = 2.28e+5
+n_R3   = 0.4
+psi_R3 = 0.0
+#.. structural char pore parameter
+tortuosity-factor = 0.08
+###################################################
+
+[numerical]
+###################################################
+# boundary conditions for conversion
+#conversion_init = 0.0 #kg/kg
+#conversion_final = 0.99 #kg/kg
+calctime = 6 #seconds
+steps = 100
+###################################################
+
+[environment]
+###################################################
+co   = './docs/exampledata/inj_gas_co.xy'
+co2  = './docs/exampledata/inj_gas_co2.xy'
+h2o  = './docs/exampledata/inj_gas_h2o.xy'
+o2   = './docs/exampledata/inj_gas_o2.xy' 
+n2   = './docs/exampledata/inj_gas_n2.xy'
+ch4  = './docs/exampledata/inj_gas_ch4.xy'
+h2   = './docs/exampledata/inj_gas_h2.xy'
+Re   = './docs/exampledata/inj_p_Re.xy' 
+Tg   = './docs/exampledata/inj_gas_temp.xy' 
+Tp   = './docs/exampledata/inj_p_temp.xy' 
+law  = './docs/exampledata/inj_p_law.xy' 
+###################################################
+```
+
 
 # Notes
 
