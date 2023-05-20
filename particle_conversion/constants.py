@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2023 Thomas Förster
+#
+# SPDX-License-Identifier: MIT
+
 # Default Values
 _defaults = {
     'numerical': {
@@ -28,7 +32,7 @@ _defaults = {
     'particle':{
         'properties': {
             'particle_init_conversion': 0.0,
-            'reactive_surface_init': 1
+            'mechanism': 'gri30.cti'
         }
     }
 }

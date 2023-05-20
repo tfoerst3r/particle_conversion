@@ -1,4 +1,5 @@
-# SPDX-FileCopyrightText: 
+# SPDX-FileCopyrightText: 2023 Thomas Förster
+#
 # SPDX-License-Identifier: CC0-1.0
 
 [reactor]
@@ -48,7 +49,6 @@ Ea_R3  = 2.28e+5
 n_R3   = 0.4
 psi_R3 = 0.0
 #.. structural char pore parameter
-#.. equal to tortuosity * constriction-factor; 1/7.13 1/8
 tortuosity-factor = 0.1
 ###################################################
 
@@ -57,8 +57,8 @@ tortuosity-factor = 0.1
 # boundary conditions for conversion
 conversion_init = 0.0 #kg/kg
 conversion_final = 0.98 #kg/kg
-calctime = 5 #seconds
-steps = 200
+calctime = 6 #seconds
+steps = 100
 ###################################################
 
 [environment]
@@ -66,12 +66,12 @@ steps = 200
 #co   = ''
 co2   = './docs/exampledata/gas_co2.dat'
 #h2o  = ''
-o2   = './docs/exampledata/gas_o2.dat'
+o2    = './docs/exampledata/gas_o2.dat'
 #n2   = ''
 #ch4  = ''
 #h2   = ''
 #Re   = ''
 #Tg   = ''
-#Tp   = './docs/exampledata/p_temperature.dat'
+#Tp   = ''
 #law  = ''
 ###################################################

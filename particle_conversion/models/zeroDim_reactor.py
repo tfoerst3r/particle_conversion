@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2023 Thomas Förster
+#
+# SPDX-License-Identifier: MIT
+
 __author__ = 'tf'
 
 from particle_conversion.models.solver_zeroDim_reactor import Solver_class
@@ -212,7 +216,6 @@ class ZEROreactor():
                 others_header               = self._others_header,
                 others_flags                = self._others_flags,
                 others                      = self.others_calc,
-                output_filename             = self.output
             )
 
             #-----------------------------------------------------

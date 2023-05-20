@@ -1,3 +1,9 @@
+#!/usr/bin/env python3
+
+# SPDX-FileCopyrightText: 2023 Thomas Förster
+#
+# SPDX-License-Identifier: MIT
+
 import numpy as np
 import cantera as ct
 

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2023 Thomas Förster
+
+SPDX-License-Identifier: CC-BY-4.0
+-->
+
 # Configuration File 
 
 ## Basic structure

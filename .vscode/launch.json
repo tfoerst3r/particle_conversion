@@ -11,6 +11,7 @@
             "program": "./particle_conversion/__main__.py",
             "args": [
                 "--config", "./config/base.toml",
+                "--output", "./base_output.csv",
             ],
             "console": "integratedTerminal"
         },
