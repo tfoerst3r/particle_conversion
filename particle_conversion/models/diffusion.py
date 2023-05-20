@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 
+# SPDX-FileCopyrightText: 2023 Thomas Förster
+#
+# SPDX-License-Identifier: MIT
+
 __author__ = 'tf'
 
 import numpy as np

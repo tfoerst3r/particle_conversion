@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2023 Thomas Förster
+#
+# SPDX-License-Identifier: MIT
+
 import numpy as np
 from scipy.optimize import bisect
 from math import pow as pow
