@@ -202,17 +202,15 @@ Please see the file [LICENSE.md](./LICENSE.md) for further information about how
 <!--===============-->
 # Citation
 
-If you are using this code in your publications, please refer to [DOI:10.](https://doi.org/) for citation, or cite as:
+If you are using this code in your publications, please refer to the following [DOI Link][zenodo] for citation, or cite as:
 
-<small>
-Thomas Förster. (2023). <i>Particle Conversion Solver: Testing tool for different conversion models via custom predefined boundary conditions.</i> Zenodo. <a href="https://doi.org/">https://doi.org/</a>
-</small>
+> Thomas Förster. (2023). <i>Particle Conversion Solver: Testing tool for different conversion models via custom predefined boundary conditions.</i> Zenodo. [https://doi.org/10.5281/zenodo.7953765][zenodo]
 
 
 <!---- Literature ---->
 
 <!---- Links ---->
-[zenodo]: https://doi.org/10.5281/zenodo.6705792
+[zenodo]: https://doi.org/10.5281/zenodo.7953765
 [download-wheel]: https://codebase.helmholtz.cloud/api/v4/projects/4188/jobs/artifacts/master/raw/dist/growth_model-1.0.1-py3-none-any.whl?job=build_wheel_package
 [ssh-key]: https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent
 [poetry-install]: https://python-poetry.org/docs/
