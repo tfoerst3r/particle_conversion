@@ -4,6 +4,13 @@ SPDX-FileCopyrightText: 2023 Thomas Förster
 SPDX-License-Identifier: CC-BY-4.0
 -->
 
+
+<div align="center">
+  <a href="https://github.com/tfoerst3r/particle_conversion">
+    <img src="./docs/images/logo.png" alt="Logo" width="80" height="80">
+  </a>
+</div>
+
 <h1 align="center">Particle Conversion Model</h1>
 <p align=center> 
 This model simulates the conversion process, based on porous carbonaceous materials, like coal. It is a zero dimensional model which solves the ODE conversion equation.
