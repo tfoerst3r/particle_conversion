@@ -7,7 +7,7 @@ SPDX-License-Identifier: CC-BY-4.0
 
 <div align="center">
   <a href="https://github.com/tfoerst3r/particle_conversion">
-    <img src="./docs/images/logo.png" alt="Logo" width="80" height="80">
+    <img src="./docs/images/logo.png" alt="Logo" width="80">
   </a>
 </div>
 
