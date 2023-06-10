@@ -7,7 +7,7 @@ __author__ = 'tf'
 from particle_conversion.models.solver_zeroDim_reactor import Solver_class
 
 import numpy as np
-from particle_conversion.constants import _defaults
+from particle_conversion.default_parameters import _defaults
 
 
 class ZEROreactor():

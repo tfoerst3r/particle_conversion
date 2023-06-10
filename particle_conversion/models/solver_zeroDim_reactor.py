@@ -9,7 +9,8 @@ from matplotlib import pyplot as plt
 import numpy as np
 from scipy.integrate import ode
 import cantera as ct
-from particle_conversion.constants import _defaults
+from particle_conversion.default_parameters import _defaults
+
 
 class Solver_class():
     def __init__(self,
