@@ -11,7 +11,7 @@ from scipy.optimize import bisect
 from math import pow 
 
 from particle_conversion.models.diffusion import DiffusionCoeff
-from particle_conversion.constants import _defaults
+from particle_conversion.default_parameters import _defaults
 from particle_conversion.utils import func_inter, normalize_dict
 
 
