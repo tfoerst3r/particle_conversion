@@ -1,0 +1,68 @@
+# SPDX-FileCopyrightText: 2023 Thomas Förster
+#
+# SPDX-License-Identifier: CC0-1.0
+
+[reactor]
+###################################################
+reactor_pressure = 20e5 #Pa
+###################################################
+
+[particle.properties]
+###################################################
+particle_diameter_init = 76e-6 #m
+density_particle_apparent_init = 727 #kg/m3
+density_ash_true = 2580 #kg/m3
+density_char_true = 2270 #kg/m3
+###################################################
+
+[particle.conversion_model]
+###################################################
+model = 'SDMp'
+###################################################
+
+[particle.proxymate_analysis]
+###################################################
+fixedcarbon_init= 0.8342
+ash_init = 0.1658
+###################################################
+
+[particle.reaction]
+###################################################
+#.. Dummys
+A=1.38e+1
+Ea=1.38e+8
+n=0.8
+psi_R0=0.0
+#.. Reaction 1: C + 0.5 O2 -> CO 
+A_R1   = 4.95392582e+02
+Ea_R1  = 1.38e+5
+n_R1   = 0.8
+psi_R1 = 0.0
+#.. Reaction 2: C + CO2 -> 2 CO
+A_R2   = 5.87769389e+07
+Ea_R2  = 2.89e+5
+n_R2   = 0.4
+psi_R2 = 0.0
+#.. Reaction 3: C + H2O -> CO + H2
+A_R3   = 2.04054428e+06  
+Ea_R3  = 2.28e+5
+n_R3   = 0.4
+psi_R3 = 0.0
+#.. structural char pore parameter
+tortuosity-factor = 0.08
+###################################################
+
+[numerical]
+###################################################
+# boundary conditions for conversion
+#conversion_init = 0.0 #kg/kg
+#conversion_final = 0.99 #kg/kg
+calctime = 6 #seconds
+steps = 100
+###################################################
+
+[environment]
+###################################################
+co2  = './docs/exampledata/co2_2x.xy'
+Tp   = './docs/exampledata/temp2x.xy' 
+###################################################

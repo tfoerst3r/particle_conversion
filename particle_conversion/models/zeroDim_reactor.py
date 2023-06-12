@@ -8,7 +8,7 @@ from particle_conversion.models.solver_zeroDim_reactor import Solver_class
 
 import numpy as np
 from particle_conversion.default_parameters import _defaults
-
+from os.path import splitext
 
 class ZEROreactor():
     def __init__(self,settings,output):
@@ -235,8 +235,10 @@ class ZEROreactor():
             #print('')
 
             #-- WRITE OUTPUT
+            file_output = f'{splitext(self.output)[0]}_run{i:02}.csv'
+
             solver_0D_reactor.char.result.sort_values('Time',inplace=True)
-            solver_0D_reactor.char.result.to_csv(self.output, sep=',')
+            solver_0D_reactor.char.result.to_csv(file_output, sep=',')
 
             self.comp_calc   = [] # reset
             self.others_calc = [] # reset
