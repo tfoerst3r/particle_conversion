@@ -47,7 +47,7 @@ class Particle_class():
         PropDict['Sdevel'] = settings['conversion_model']['model']
 
         # model properties
-        PropDict['tauf'] = PropDict.pop('tortuosity-factor')
+        PropDict['tauf'] = PropDict['tortuosity-factor']
 
 
         #.. gas phase properties
