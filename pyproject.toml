@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "particle-conversion"
-version = "1.0.0"
+version = "1.0.1"
 description = ""
 authors = ["Foerster, T. <thomas.foerster@hzdr.de>"]
 readme = "README.md"
