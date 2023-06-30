@@ -39,7 +39,6 @@ class Particle_class():
             PropDict['rho_char_true'] = \
                 settings['properties']['density_char_true'] if 'density_char_true' in settings['properties'] else _defaults['particle']['properties']['density_char_true']
         PropDict['sint0']         = 1 # deprecated should be A = s0 * A*; makes it more feasible
-        PropDict['mechanism']     = _defaults['numerical']['mechanism']
         
         # proxymate analysis
         PropDict['y_fc0']  = settings['proxymate_analysis']['fixedcarbon_init']
@@ -51,7 +50,7 @@ class Particle_class():
 
 
         #.. gas phase properties
-        self.gas = ct.Solution(PropDict['mechanism'])
+        self.gas = ct.Solution(_defaults['chemical_mechanism'])
         self.gas.transport_model = 'Multi'
 
         self._gas_const  = ct.gas_constant/1000   # gas constant 8.3144 J/mol.K
@@ -60,7 +59,7 @@ class Particle_class():
         self.gas_flags   = gas_flags
         self.gas_default = ''
         self.gas_comp_dict = { 'CO':0, 'CO2':0, 'H2O':0, 'O2':0, 'N2':0, 'CH4':0, 'H2':0 }
-        self.diffC = DiffusionCoeff(PropDict['mechanism'])   # init class definition
+        self.diffC = DiffusionCoeff()
         self.gas_default_diff_partner = { 'CO2':{'CO':0},'O2':{'CO2':0},'H2O':{'CO':0.0,'H2':0.0} }
 
         'others, Re,Pr,Tg,Tp'

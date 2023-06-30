@@ -23,6 +23,7 @@ pconv = "particle_conversion.__main__:main"
 ipython = "^8.13.2"
 reuse = "^1.1.2"
 flake8 = "^6.0.0"
+pytest = "^7.4.0"
 
 [build-system]
 requires = ["poetry-core"]

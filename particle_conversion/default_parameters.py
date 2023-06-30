@@ -4,12 +4,12 @@
 
 # Default Values
 _defaults = {
+    'chemical_mechanism': 'gri30.yaml',
     'numerical': {
         'calctime': 5.0, #s
         'steps': 200,
         'conversion_init': 0.0,
         'conversion_final': 0.999,
-        'mechanism': 'gri30.cti'
     },
     'reactor': {
         'fallback_temp': 1273.15, #K

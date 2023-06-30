@@ -35,6 +35,9 @@ share/python-wheels/
 *.egg
 MANIFEST
 
+# Jupyter
+*.ipynb
+.ipynb_checkpoints
 
 # Environments
 .env
@@ -46,8 +49,6 @@ env.bak/
 venv.bak/
 
 # Logfile
-
-growth_model.log
 
 # PyCharm
 #  JetBrains specific template is maintained in a separate JetBrains.gitignore that can
@@ -62,3 +63,4 @@ growth_model.log
 # Temporary files
 *.sw?
 *.~*
+

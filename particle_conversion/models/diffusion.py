@@ -7,19 +7,22 @@
 import numpy as np
 import cantera as ct
 
+from particle_conversion.default_parameters import _defaults
+
 class DiffusionCoeff():
     """
     pass
     """
-    def __init__(self,mechanism):
+    def __init__(self):
 
         self._gas_constant  = ct.gas_constant/1000 # 8.3144621 J/mol-K
         self._avogadro = ct.avogadro/1000 # (1/mol) / (1/mol)
-        self._gas = ct.Solution(mechanism)
+        self._gas = ct.Solution(_defaults['chemical_mechanism'])
         self._oxidizer = 'O2'
 
 
-    def chapmanAB(self,temp,pressure,gasA,gasB):
+    def binarydiffusion(self,temp,pressure,gasA,gasB):
+    #def chapmanAB(self,temp,pressure,gasA,gasB):
 
         def omega_AB(temp,gasA,gasB):
 
@@ -83,6 +86,8 @@ class DiffusionCoeff():
     def diffusion_mix(self,comp,temp,pressure):
         """
         @comp: gas composition in mole fractions, first is the diffusing species
+        @temp: gas temperature, K
+        @pressure: gas total pressure, Pa
         :return:
         """
         elements = []
@@ -101,7 +106,7 @@ class DiffusionCoeff():
             if i == 0:
                 dmix = 0
             else:
-                diff_coeffAB = self.chapmanAB(temp, pressure, elements[0], elements[i])
+                diff_coeffAB = self.binarydiffusion(temp, pressure, elements[0], elements[i])
                 dmix += value[i] / diff_coeffAB
 
         dmix = (1-value[0])/dmix
